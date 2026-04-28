@@ -1,0 +1,116 @@
+.patients-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  height: 100%;
+}
+
+.filters-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  /* background: var(--color-highlight);*/
+  border-bottom: 1px solid rgba(255, 255, 255, 0.485) !important;
+  background: rgba(255, 255, 255, 0.005) !important;
+}
+
+@media (min-width: 768px) {
+  .filters-header {
+    flex-direction: row;
+  }
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color 0.3s ease;
+  color: var(--color-gray-400);
+  z-index: 10;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+
+  border-radius: var(--radius-full) !important;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--color-bg-base) !important;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-white) !important;
+}
+
+.search-box input:focus {
+  background: var(--color-bg-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.search-box input:focus+svg {
+  color: var(--color-primary) !important;
+}
+
+.filters-actions {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-left: auto;
+}
+
+/* Tab logic for list pages */
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  flex: 1;
+}
+
+.patients-tabs-list {
+  display: flex;
+  gap: var(--spacing-2);
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 2px;
+}
+
+.patients-tab-btn {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-weight: 500;
+  color: var(--color-gray-500);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+  margin-bottom: -3px;
+  /* overlap border */
+}
+
+.patients-tab-btn:hover {
+  color: var(--color-gray-300);
+}
+
+.patients-tab-btn.active {
+  color: var(--color-white);
+  border-bottom-color: var(--color-primary);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: rgba(73, 21, 186, 0.875);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.icon-btn {
+  color: bisque;
+}

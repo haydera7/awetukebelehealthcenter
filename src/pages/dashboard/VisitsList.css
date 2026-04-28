@@ -1,0 +1,47 @@
+/* VisitsList.css */
+
+.vl-search-box {
+  position: relative;
+  width: 400px;
+}
+
+.vl-search-box svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.vl-search-box input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--color-bg-base);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-white);
+}
+
+.vl-search-box input:focus {
+  background: var(--color-bg-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.vl-search-box input:focus+svg {
+  color: var(--color-primary) !important;
+}
+
+.vl-header-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.485) !important;
+  background: rgba(255, 255, 255, 0.005) !important;
+}
