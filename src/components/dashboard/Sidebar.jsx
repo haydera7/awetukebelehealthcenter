@@ -7,7 +7,9 @@ import {
   FileText,
   Settings,
   LogOut,
-  Zap
+  Zap,
+  Pill,
+  BarChart
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
@@ -18,11 +20,13 @@ export default function Sidebar({ isOpen }) {
   const role = user?.role || 'Doctor';
 
   const allNavItems = [
-    { name: 'Overview', path: '/dashboard/overview', icon: <LayoutDashboard size={20} />, roles: ['Admin', 'Doctor', 'Receptionist', 'Lab Technician'] },
-    { name: 'Patients', path: '/dashboard/patients', icon: <Users size={20} />, roles: ['Admin', 'Doctor', 'Receptionist'] },
+    { name: 'Overview', path: '/dashboard/overview', icon: <LayoutDashboard size={20} />, roles: ['Admin', 'Doctor', 'Receptionist', 'Lab Technician', 'Pharmacist'] },
+    { name: 'Patients', path: '/dashboard/patients', icon: <Users size={20} />, roles: ['Admin', 'Doctor', 'Receptionist', 'Pharmacist'] },
     { name: 'Staff', path: '/dashboard/staff', icon: <Users size={20} />, roles: ['Admin'] },
     { name: 'Visits', path: '/dashboard/visits', icon: <CalendarDays size={20} />, roles: ['Admin', 'Doctor', 'Receptionist'] },
-    { name: 'Medical Records', path: '/dashboard/records', icon: <FileText size={20} />, roles: ['Admin', 'Doctor', 'Lab Technician'] },
+    { name: 'Medical Records', path: '/dashboard/records', icon: <FileText size={20} />, roles: ['Admin', 'Doctor', 'Lab Technician', 'Pharmacist'] },
+    { name: 'Pharmacy & Billing', path: '/dashboard/pharmacy', icon: <Pill size={20} />, roles: ['Admin', 'Receptionist', 'Pharmacist'] },
+    { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart size={20} />, roles: ['Admin', 'Doctor'] },
   ];
 
   const navItems = allNavItems.filter(item => item.roles.includes(role));

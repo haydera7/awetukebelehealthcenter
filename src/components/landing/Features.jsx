@@ -2,21 +2,21 @@ import { UserPlus, FileText, History, Activity, Pill, FlaskConical } from 'lucid
 
 export default function Features() {
   const features = [
-    { icon: <UserPlus />, title: "Smart Patient Registration", desc: "Automate intake workflows with intelligent form processing." },
-    { icon: <FileText />, title: "Unified Medical Records", desc: "Complete 360° view of patient histories securely stored." },
-    { icon: <History />, title: "Visit & History Tracking", desc: "Granular logging of all clinical interactions and timestamps." },
-    { icon: <Activity />, title: "Clinical Diagnosis System", desc: "Advanced algorithmic support for identifying complex conditions." },
-    { icon: <Pill />, title: "Intelligent Prescription", desc: "Automated routing and safety cross-checking for medications." },
-    { icon: <FlaskConical />, title: "Integrated Lab Results", desc: "Zero-latency synchronization with local laboratory equipment." }
+    { icon: <UserPlus />, title: "Easy Registration", desc: "Digital intake forms that take seconds to complete, permanently eliminating repetitive desk queues." },
+    { icon: <FileText />, title: "Instant Patient Records", desc: "Find patient medical history instantly. No more lost paper folders or illegible writing." },
+    { icon: <History />, title: "Clear Visit Histories", desc: "Reliable, chronological tracking of every past consultation, prescription, and lab result." },
+    { icon: <Activity />, title: "Doctor's Dashboard", desc: "A clean interface for physicians to diagnose, review charts, and request tests in one click." },
+    { icon: <Pill />, title: "Seamless Pharmacy", desc: "Prescriptions are sent digitally so medication is ready exactly when the patient arrives." },
+    { icon: <FlaskConical />, title: "Direct Lab Routing", desc: "Lab technicians receive requests immediately and send results back directly to the doctor's screen." }
   ];
 
   return (
     <section id="features" className="premium-section grid-features-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="heading-2 section-title">Unrivaled <span className="text-gradient">Capabilities</span></h2>
+          <h2 className="heading-2 section-title">Built for <span className="text-gradient">Simplicity</span></h2>
           <p className="section-subtitle">
-            Engineered exclusively for absolute clinical dominance.
+            Every tool is designed to solve real daily frustrations in clinic environments.
           </p>
         </div>
         

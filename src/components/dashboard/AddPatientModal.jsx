@@ -159,7 +159,7 @@ export default function AddPatientModal() {
               </div>
             </div>
 
-            <div className="modal-footer" style={{ borderTop: '1px solid var(--color-gray-100)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
+            <div className="modal-footer" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
               <button 
                 type="button" 
                 className="btn btn-outline flex-1" 

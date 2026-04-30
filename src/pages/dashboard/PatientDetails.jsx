@@ -18,7 +18,7 @@ export default function PatientDetails() {
   const patientRecords = medicalRecords.filter(r => r.patientId === id);
   const latestVitals = vitals.filter(v => v.patientId === id).sort((a, b) => new Date(b.date) - new Date(a.date))[0];
 
-  const canAddVisit = ['Doctor'].includes(user?.role);
+  const canAddVisit = ['Receptionist'].includes(user?.role);
   const canAddRecord = ['Lab technician', 'Doctor'].includes(user?.role);
 
   if (!patient) {
@@ -35,7 +35,7 @@ export default function PatientDetails() {
 
   return (
     <div className="patient-details-page slide-in">
-      <div className="overview-header" style={{ marginBottom: 0 }}>
+      <div className="overview-header" style={{ marginBottom: 40 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button className="icon-btn" onClick={() => navigate('/dashboard/patients')}>
             <ArrowLeft size={20} />
@@ -179,10 +179,10 @@ export default function PatientDetails() {
                 </div>
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {patientRecords.filter(r => r.type === 'Prescription').map(presc => (
-                    <div key={presc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--color-gray-50)', borderRadius: '8px', border: '1px solid var(--color-gray-200)' }}>
+                    <div key={presc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--color-highlight)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                       <div>
-                        <h4 style={{ fontWeight: 600 }}>{presc.title}</h4>
-                        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-500)' }}>{presc.notes}</p>
+                        <h4 style={{ fontWeight: 600, color: 'var(--text-color)' }}>{presc.title}</h4>
+                        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>{presc.notes}</p>
                         <p style={{ fontSize: '11px', color: 'var(--color-gray-400)', marginTop: '4px' }}>Prescribed by {presc.doctor} on {presc.date}</p>
                       </div>
                       <button className="btn btn-outline" style={{ fontSize: '11px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => exportMedicalRecordToPdf(presc, patient)}>
@@ -204,10 +204,10 @@ export default function PatientDetails() {
                 </div>
                 <div style={{ padding: '20px' }}>
                   {patientRecords.filter(r => r.type === 'Lab Result').map(lab => (
-                    <div key={lab.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--color-gray-100)' }}>
+                    <div key={lab.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--glass-border)' }}>
                       <div>
-                        <h4 style={{ fontWeight: 500, color: 'var(--color-gray-900)' }}>{lab.title}</h4>
-                        <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-500)' }}>{lab.date} - Result: {lab.notes}</p>
+                        <h4 style={{ fontWeight: 500, color: 'var(--text-color)' }}>{lab.title}</h4>
+                        <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>{lab.date} - Result: {lab.notes}</p>
                       </div>
                       <button className="btn btn-outline" style={{ fontSize: '12px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={() => exportMedicalRecordToPdf(lab, patient)}>
                         <Download size={14} /> PDF
@@ -230,8 +230,8 @@ export default function PatientDetails() {
                 {patientRecords.filter(r => r.type === 'Diagnosis').map(diag => (
                   <div key={diag.id} style={{ borderLeft: '3px solid var(--color-primary)', paddingLeft: '16px' }}>
                     <div style={{ fontSize: '12px', color: 'var(--color-gray-400)' }}>{diag.date}</div>
-                    <h4 style={{ fontWeight: 600, margin: '4px 0' }}>{diag.title}</h4>
-                    <p style={{ color: 'var(--color-gray-600)', fontSize: '14px' }}>{diag.notes}</p>
+                    <h4 style={{ fontWeight: 600, margin: '4px 0', color: 'var(--text-color)' }}>{diag.title}</h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>{diag.notes}</p>
                     <div style={{ fontSize: '12px', color: 'var(--color-gray-500)', marginTop: '4px' }}>Diagnosed by {diag.doctor}</div>
                   </div>
                 ))}
@@ -239,12 +239,12 @@ export default function PatientDetails() {
                   <p style={{ color: 'var(--color-gray-500)', fontSize: 'var(--font-size-sm)' }}>No diagnosis history found.</p>
                 )}
               </div>
-              <hr style={{ border: 0, borderTop: '1px solid var(--color-gray-200)', margin: '24px 0' }} />
+              <hr style={{ border: 0, borderTop: '1px solid var(--glass-border)', margin: '24px 0' }} />
               <h3 className="heading-4" style={{ marginBottom: '16px' }}>Notes & Allergies</h3>
-              <p style={{ color: 'var(--color-gray-600)', lineHeight: 1.6 }}>
+              <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 Known Allergies: <span style={{ color: 'var(--color-danger)', fontWeight: 600 }}>{patient.allergy || 'None'}</span>
               </p>
-              <p style={{ color: 'var(--color-gray-600)', lineHeight: 1.6, marginTop: '8px' }}>
+              <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, marginTop: '8px' }}>
                 Address: {patient.address}
               </p>
             </div>

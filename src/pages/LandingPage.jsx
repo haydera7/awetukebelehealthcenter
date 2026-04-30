@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
 import About from '../components/landing/About';
+import Trust from '../components/landing/Trust';
+import Testimonials from '../components/landing/Testimonials';
+import CTA from '../components/landing/CTA';
 import Services from '../components/landing/Services';
 import Features from '../components/landing/Features';
 import Comparison from '../components/landing/Comparison';
@@ -23,17 +26,20 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
-      <Navbar 
-        isScrolled={isScrolled} 
-        onOpenLogin={() => setIsLoginModalOpen(true)} 
+      <Navbar
+        isScrolled={isScrolled}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
       />
       <main>
         <Hero onGetStarted={() => setIsLoginModalOpen(true)} />
         <About />
+        <Trust />
         <Services />
         <Features />
         <Comparison />
         <SystemPreview />
+        <Testimonials />
+        <CTA onGetStarted={() => setIsLoginModalOpen(true)} />
       </main>
 
       {/* Premium Footer */}
@@ -41,14 +47,14 @@ export default function LandingPage() {
         <div className="container footer-container">
           <div className="footer-brand">
             <div className="navbar-logo" style={{ marginBottom: 'var(--spacing-4)' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.4))' }}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.4))' }}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
               <span>HealthCare Pro</span>
             </div>
             <p className="footer-desc">
               The premier simulated medical and clinical analytics platform for industry leaders building the future of digital health.
             </p>
           </div>
-          
+
           <div className="footer-links">
             <div className="link-column">
               <h4>Platform</h4>
@@ -69,7 +75,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="footer-bottom">
           <div className="container bottom-container">
             <p>&copy; {new Date().getFullYear()} HealthCare Pro. All rights reserved.</p>

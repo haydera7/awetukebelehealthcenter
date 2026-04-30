@@ -2,11 +2,11 @@ import { Check, Minus } from 'lucide-react';
 
 export default function Comparison() {
   const comparisonData = [
-    { feature: "Simulated Data Engine", us: true, others: false },
-    { feature: "End-to-end Encryption", us: true, others: true },
-    { feature: "Real-time Lab Feed", us: true, others: false },
-    { feature: "No Delay Executions", us: true, others: false },
-    { feature: "Biometric Login Sync", us: true, others: true },
+    { feature: "No Internet Required (Local Sync)", us: true, others: false },
+    { feature: "Digital Lab & Pharmacy Sync", us: true, others: false },
+    { feature: "Simple Learning Curve", us: true, others: false },
+    { feature: "Eliminates Paper Folders", us: true, others: false },
+    { feature: "Ethiopian Clinic Focused", us: true, others: true },
   ];
 
   return (
@@ -16,7 +16,7 @@ export default function Comparison() {
         <div className="section-header">
           <h2 className="heading-2 section-title">How does <span className="text-gradient">HealthCare Pro</span> compare?</h2>
           <p className="section-subtitle">
-            Industry leading infrastructure that outperforms standard EMS providers.
+            The only platform practically designed for Ethiopian health centers.
           </p>
         </div>
 
@@ -24,7 +24,7 @@ export default function Comparison() {
           
           {/* Legacy Card */}
           <div className="comp-card">
-            <h3>Legacy Systems</h3>
+            <h3>Paper Records</h3>
             <div className="comp-list">
               {comparisonData.map((item, i) => (
                 <div key={i} className="comp-item">
@@ -46,12 +46,12 @@ export default function Comparison() {
                 </div>
               ))}
             </div>
-            <button className="btn btn-glow w-full" style={{ marginTop: '32px' }}>Start Challenge</button>
+            <button className="btn btn-primary w-full" style={{ marginTop: '32px' }}>Start Managing Better</button>
           </div>
 
           {/* Another Competitor Card */}
           <div className="comp-card">
-             <h3>Standard SaaS</h3>
+             <h3>Generic Software</h3>
              <div className="comp-list">
               {comparisonData.map((item, i) => (
                 <div key={i} className="comp-item">

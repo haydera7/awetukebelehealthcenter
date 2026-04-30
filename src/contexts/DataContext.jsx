@@ -36,6 +36,17 @@ const INITIAL_VITALS = [
   { id: 'VIT-1', patientId: '1', visitId: 'VS-1042', bp: '138/88', heartRate: '75', temp: '36.6', weight: '78', date: '2026-04-24' },
 ];
 
+const INITIAL_INVENTORY = [
+  { id: 'MED-1', name: 'Amoxicillin 500mg', category: 'Antibiotic', stock: 450, unitPrice: 15, status: 'In Stock' },
+  { id: 'MED-2', name: 'Paracetamol 500mg', category: 'Painkiller', stock: 1200, unitPrice: 5, status: 'In Stock' },
+  { id: 'MED-3', name: 'Ibuprofen 400mg', category: 'Anti-inflammatory', stock: 80, unitPrice: 10, status: 'Low Stock' },
+];
+
+const INITIAL_BILLS = [
+  { id: 'INV-1001', patientId: '1', patientName: 'Chala Bula', date: '2026-04-24', items: [{ desc: 'Consultation', qty: 1, cost: 200 }, { desc: 'Lisinopril 10mg', qty: 1, cost: 150 }], total: 350, status: 'Paid' },
+  { id: 'INV-1002', patientId: '2', patientName: 'Tammirat Oli', date: '2026-04-24', items: [{ desc: 'Consultation', qty: 1, cost: 200 }, { desc: 'Blood Sugar Test', qty: 1, cost: 100 }], total: 300, status: 'Unpaid' }
+];
+
 export const DataProvider = ({ children }) => {
   const [patients, setPatients] = useState(() => {
     const saved = localStorage.getItem('healthcare-patients');
@@ -62,6 +73,16 @@ export const DataProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : INITIAL_STAFF;
   });
 
+  const [inventory, setInventory] = useState(() => {
+    const saved = localStorage.getItem('healthcare-inventory');
+    return saved ? JSON.parse(saved) : INITIAL_INVENTORY;
+  });
+
+  const [bills, setBills] = useState(() => {
+    const saved = localStorage.getItem('healthcare-bills');
+    return saved ? JSON.parse(saved) : INITIAL_BILLS;
+  });
+
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false);
   const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
@@ -75,7 +96,9 @@ export const DataProvider = ({ children }) => {
     localStorage.setItem('healthcare-records', JSON.stringify(medicalRecords));
     localStorage.setItem('healthcare-vitals', JSON.stringify(vitals));
     localStorage.setItem('healthcare-staffs', JSON.stringify(staffs));
-  }, [patients, visits, medicalRecords, vitals, staffs]);
+    localStorage.setItem('healthcare-inventory', JSON.stringify(inventory));
+    localStorage.setItem('healthcare-bills', JSON.stringify(bills));
+  }, [patients, visits, medicalRecords, vitals, staffs, inventory, bills]);
 
   const addPatient = (newPatient) => {
     const patientWithId = {
@@ -93,7 +116,7 @@ export const DataProvider = ({ children }) => {
     const newVisit = {
       ...visitData,
       id: visitId,
-      status: 'Scheduled'
+      status: 'Waiting'
     };
     setVisits(prev => [newVisit, ...prev]);
 
@@ -119,6 +142,33 @@ export const DataProvider = ({ children }) => {
       date: new Date().toISOString().split('T')[0]
     };
     setMedicalRecords(prev => [newRecord, ...prev]);
+
+    // Update Visit States logically based on Doctor actions
+    if (recordData.visitId) {
+       if (recordData.type === 'Prescription') {
+         updateVisitStatus(recordData.visitId, 'Pharmacy Queue');
+       } else if (recordData.type === 'Lab Request') {
+         updateVisitStatus(recordData.visitId, 'Lab Requested');
+       } else if (recordData.type === 'Lab Result') {
+         updateVisitStatus(recordData.visitId, 'Results Ready');
+       }
+    }
+
+    // Auto-generate a Pharmacy order/bill if the doctor issues a Prescription
+    if (recordData.type === 'Prescription') {
+      const patient = patients.find(p => p.id === recordData.patientId);
+      const newBill = {
+        id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+        patientId: recordData.patientId,
+        visitId: recordData.visitId,
+        patientName: patient ? patient.name : 'Unknown Patient',
+        date: new Date().toISOString().split('T')[0],
+        items: [{ desc: recordData.title || 'Pharmacy Prescription', qty: 1, cost: 150 }],
+        total: 150,
+        status: 'Unpaid'
+      };
+      setBills(prev => [newBill, ...prev]);
+    }
   };
 
   const addVitals = (vitalsData) => {
@@ -144,12 +194,38 @@ export const DataProvider = ({ children }) => {
     setPatients(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
   };
 
+  const updateVisitStatus = (id, newStatus) => {
+    setVisits(prev => prev.map(v => v.id === id ? { ...v, status: newStatus } : v));
+  };
+
   const deletePatient = (id) => {
     setPatients(prev => prev.filter(p => p.id !== id));
   };
 
   const deleteStaff = (id) => {
     setStaffs(prev => prev.filter(s => s.id !== id));
+  };
+
+  const updateInventoryStock = (id, amount) => {
+    setInventory(prev => prev.map(med => {
+      if(med.id === id) {
+        const newStock = med.stock + amount;
+        return { ...med, stock: newStock, status: newStock <= 100 ? 'Low Stock' : 'In Stock' };
+      }
+      return med;
+    }));
+  };
+
+  const markBillPaid = (id) => {
+    setBills(prev => prev.map(bill => {
+      if (bill.id === id) {
+        if (bill.visitId) {
+          updateVisitStatus(bill.visitId, 'Completed');
+        }
+        return { ...bill, status: 'Paid' }
+      }
+      return bill;
+    }));
   };
 
   const openAddPatientModal = () => setIsAddPatientModalOpen(true);
@@ -185,14 +261,19 @@ export const DataProvider = ({ children }) => {
       medicalRecords,
       vitals,
       staffs,
+      inventory,
+      bills,
       addPatient,
       addVisit,
       addMedicalRecord,
       addVitals,
       addStaff,
       updatePatient,
+      updateVisitStatus,
       deletePatient,
       deleteStaff,
+      updateInventoryStock,
+      markBillPaid,
       isAddPatientModalOpen,
       openAddPatientModal,
       closeAddPatientModal,

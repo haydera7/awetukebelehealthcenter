@@ -12,7 +12,7 @@ export default function LoginModal({ onClose }) {
   const handleLogin = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     // Simulate auth delay
     setTimeout(() => {
       login(role);
@@ -31,28 +31,28 @@ export default function LoginModal({ onClose }) {
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="modal-body">
           <form onSubmit={handleLogin}>
-            
+
             <div className="form-group">
               <label className="form-label">Email Address</label>
-              <input 
-                type="email" 
-                className="form-control" 
-                placeholder="doctor@hospital.com" 
-                required 
+              <input
+                type="email"
+                className="form-control"
+                placeholder="doctor@hospital.com"
+                required
                 defaultValue="doctor@hospital.com"
               />
             </div>
 
             <div className="form-group">
               <label className="form-label">Password</label>
-              <input 
-                type="password" 
-                className="form-control" 
-                placeholder="••••••••" 
-                required 
+              <input
+                type="password"
+                className="form-control"
+                placeholder="••••••••"
+                required
                 defaultValue="password123"
               />
             </div>
@@ -64,6 +64,7 @@ export default function LoginModal({ onClose }) {
                 <option>Admin</option>
                 <option>Receptionist</option>
                 <option>Lab Technician</option>
+                <option >Pharmacist</option>
               </select>
             </div>
 
@@ -73,9 +74,9 @@ export default function LoginModal({ onClose }) {
               </a>
             </div>
 
-            <button 
-              type="submit" 
-              className="btn btn-primary w-full" 
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
               disabled={isLoading}
               style={{ height: '48px' }}
             >

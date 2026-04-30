@@ -16,6 +16,7 @@ export default function Navbar({ isScrolled, onOpenLogin }) {
           <div className="navbar-menu">
             <a href="#" className="menu-item">Home</a>
             <a href="#about" className="menu-item">About</a>
+            <a href="#trust" className="menu-item">Trust</a>
             <a href="#services" className="menu-item">Services</a>
             <a href="#features" className="menu-item">Features</a>
           </div>
@@ -38,6 +39,7 @@ export default function Navbar({ isScrolled, onOpenLogin }) {
       <div className={`mobile-dropdown ${isMobileOpen ? 'open' : ''}`}>
         <div className="mobile-dropdown-content">
           <a href="#platform" className="mobile-link" onClick={() => setIsMobileOpen(false)}>Platform</a>
+          <a href="#trust" className="mobile-link" onClick={() => setIsMobileOpen(false)}>Trust</a>
           <a href="#features" className="mobile-link" onClick={() => setIsMobileOpen(false)}>Features</a>
           <a href="#solutions" className="mobile-link" onClick={() => setIsMobileOpen(false)}>Solutions</a>
           <a href="#pricing" className="mobile-link" onClick={() => setIsMobileOpen(false)}>Pricing</a>

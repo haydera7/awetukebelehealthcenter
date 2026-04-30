@@ -13,8 +13,8 @@ export default function AddRecordModal() {
 
   const availableTypes = (() => {
     if (user?.role === 'Lab Technician') return ['Lab Result'];
-    if (user?.role === 'Doctor') return ['Diagnosis', 'Prescription'];
-    return ['Diagnosis', 'Prescription', 'Lab Result'];
+    if (user?.role === 'Doctor') return ['Diagnosis', 'Prescription', 'Lab Request'];
+    return ['Diagnosis', 'Prescription', 'Lab Request', 'Lab Result'];
   })();
 
   const defaultType = availableTypes.includes('Diagnosis') ? 'Diagnosis' : availableTypes[0];
@@ -115,30 +115,31 @@ export default function AddRecordModal() {
                          gap: '8px',
                          padding: '16px 8px',
                          borderRadius: '12px',
-                         border: isSelected ? '2px solid var(--color-primary)' : '2px solid var(--color-gray-200)',
-                         backgroundColor: isSelected ? '#eff6ff' : '#ffffff', // subtle primary light or white
-                         color: isSelected ? 'var(--color-primary-dark)' : 'var(--color-gray-600)',
+                         border: isSelected ? '2px solid var(--color-primary)' : '2px solid var(--glass-border)',
+                         backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.1)' : 'var(--color-highlight)', // theme adapted
+                         color: isSelected ? 'var(--color-primary)' : 'var(--color-gray-400)',
                          cursor: 'pointer',
                          transition: 'all 0.2s ease',
                          fontWeight: isSelected ? '600' : '500',
                          fontSize: '13px',
-                         boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.1)' : 'none'
+                         boxShadow: isSelected ? 'var(--shadow-sm)' : 'none'
                        }}
                        onMouseEnter={(e) => {
                          if (!isSelected) {
-                            e.currentTarget.style.borderColor = 'var(--color-gray-400)';
-                            e.currentTarget.style.backgroundColor = '#f8fafc';
+                            e.currentTarget.style.borderColor = 'var(--color-gray-500)';
+                            e.currentTarget.style.backgroundColor = 'var(--color-highlight-hover)';
                          }
                        }}
                        onMouseLeave={(e) => {
                          if (!isSelected) {
-                            e.currentTarget.style.borderColor = 'var(--color-gray-200)';
-                            e.currentTarget.style.backgroundColor = '#ffffff';
+                            e.currentTarget.style.borderColor = 'var(--glass-border)';
+                            e.currentTarget.style.backgroundColor = 'var(--color-highlight)';
                          }
                        }}
                      >
                        {type === 'Diagnosis' && <Activity size={24} color={isSelected ? 'var(--color-primary)' : 'var(--color-gray-400)'} />}
                        {type === 'Prescription' && <Pill size={24} color={isSelected ? 'var(--color-primary)' : 'var(--color-gray-400)'} />}
+                       {type === 'Lab Request' && <FileText size={24} color={isSelected ? 'var(--color-warning)' : 'var(--color-gray-400)'} />}
                        {type === 'Lab Result' && <FileText size={24} color={isSelected ? 'var(--color-primary)' : 'var(--color-gray-400)'} />}
                        {type}
                      </button>
@@ -157,7 +158,8 @@ export default function AddRecordModal() {
                 type="text" 
                 className="form-control" 
                 placeholder={formData.type === 'Diagnosis' ? 'e.g., Hypertension' : 
-                             formData.type === 'Prescription' ? 'e.g., Lisinopril 10mg' : 'e.g., Complete Blood Count (CBC)'}
+                             formData.type === 'Prescription' ? 'e.g., Lisinopril 10mg' : 
+                             formData.type === 'Lab Request' ? 'e.g., Complete Blood Count (CBC)' : 'e.g., CBC Results Found'}
                 required 
                 value={formData.title}
                 onChange={handleChange}
@@ -185,12 +187,12 @@ export default function AddRecordModal() {
                 <label className="form-label">Upload Detailed Results (Optional)</label>
                 <div 
                   style={{
-                    border: '2px dashed var(--color-gray-200)',
+                    border: '2px dashed var(--glass-border)',
                     borderRadius: '8px',
                     padding: '24px',
                     textAlign: 'center',
                     cursor: 'pointer',
-                    background: 'var(--color-gray-50)',
+                    background: 'var(--color-highlight)',
                     transition: 'all 0.2s ease'
                   }}
                   onClick={() => fileInputRef.current?.click()}
@@ -216,7 +218,7 @@ export default function AddRecordModal() {
               </div>
             )}
 
-            <div className="modal-footer" style={{ borderTop: '1px solid var(--color-gray-100)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
+            <div className="modal-footer" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
               <button 
                 type="button" 
                 className="btn btn-outline flex-1" 

@@ -11,6 +11,8 @@ import VisitsList from './pages/dashboard/VisitsList';
 import MedicalRecords from './pages/dashboard/MedicalRecords';
 import StaffList from './pages/dashboard/StaffList';
 import Settings from './pages/dashboard/Settings';
+import PharmacyBilling from './pages/dashboard/PharmacyBilling';
+import Analytics from './pages/dashboard/Analytics';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
               <Route path="visits" element={<VisitsList />} />
               <Route path="records" element={<MedicalRecords />} />
               <Route path="staff" element={<StaffList />} />
+              <Route path="pharmacy" element={<PharmacyBilling />} />
+              <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>

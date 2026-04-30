@@ -32,26 +32,23 @@ export default function Services() {
       <section id="services" className="premium-section services-section">
          <div className="container mx-auto px-6" style={{ padding: '4rem 2rem' }}>
             <div className="section-header" style={{ textAlign: 'center', marginBottom: 'var(--spacing-24)' }}>
-               <h2 className="heading-2 section-title text-4xl md:text-5xl font-bold mb-6 text-white leading-tight">
-                  Real Services for <br className="hidden md:block" />
-                  <span className="text-gradient">Local Clinics</span>
+               <h2 className="heading-2 section-title" style={{ marginBottom: 'var(--spacing-6)' }}>
+                  Core <span className="text-gradient">Capabilities</span>
                </h2>
-               <p className="section-subtitle text-slate-300 mx-auto max-w-2xl text-lg mt-4">
+               <p className="section-subtitle" style={{ margin: '0 auto', maxWidth: '600px' }}>
                   Practical, easy-to-use tools designed specifically to solve the daily struggles of healthcare centers like those in Awetu Mendera.
                </p>
             </div>
             {services.map((item, i) => (
-               <div key={i} className={`service-row ${item.reverse ? 'reverse' : ''} flex flex-col ${item.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12 lg:gap-24 mb-24`}>
-                  <div className="service-text lg:w-1/2">
-                     <h3 className="heading-2 service-title text-2xl md:text-3xl font-bold text-white mb-4">{item.title}</h3>
-                     <p className="service-desc text-slate-300 text-lg leading-relaxed">{item.desc}</p>
+               <div key={i} className={`service-row ${item.reverse ? 'reverse' : ''}`} style={{ display: 'flex', flexDirection: item.reverse ? 'row-reverse' : 'row', alignItems: 'center', gap: 'var(--spacing-16)', marginBottom: 'var(--spacing-24)', flexWrap: 'wrap' }}>
+                  <div className="service-text" style={{ flex: '1 1 400px' }}>
+                     <h3 className="heading-2 service-title" style={{ marginBottom: 'var(--spacing-4)' }}>{item.title}</h3>
+                     <p className="about-desc">{item.desc}</p>
                   </div>
-                  <div className="service-visual lg:w-1/2 flex justify-center">
-                     <div className="relative">
-                        <div className="absolute inset-0 bg-white/5 blur-2xl rounded-full"></div>
-                        <div className="glass-panel service-floating-block bg-gray-900/80 backdrop-blur-xl border border-[var(--color-border)] p-12 rounded-3xl shadow-2xl relative transform hover:-translate-y-2 transition-transform duration-300">
-                           {item.icon}
-                        </div>
+                  <div className="service-visual" style={{ flex: '1 1 400px', display: 'flex', justifyContent: 'center' }}>
+                     <div className="glass-panel" style={{ padding: 'var(--spacing-12)', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden' }}>
+                        <div style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', background: 'var(--color-highlight)', opacity: '0.1' }}></div>
+                        {item.icon}
                      </div>
                   </div>
                </div>

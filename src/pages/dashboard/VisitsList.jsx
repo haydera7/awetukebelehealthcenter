@@ -78,7 +78,8 @@ export default function VisitsList() {
                   </td>
                   <td>
                     <span className={`badge ${visit.status === 'Completed' ? 'badge-success' :
-                      visit.status === 'Scheduled' ? 'badge-warning' : 'badge-primary'
+                      visit.status === 'Waiting' || visit.status === 'Scheduled' ? 'badge-warning' :
+                      visit.status === 'Pharmacy Queue' || visit.status === 'Lab Requested' ? 'badge-danger' : 'badge-primary'
                       }`}>
                       {visit.status}
                     </span>

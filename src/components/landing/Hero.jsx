@@ -17,20 +17,22 @@ export default function Hero({ onGetStarted }) {
           </div>
 
           <h1 className="hero-h1">
-            Digitalize your clinic. <br />
+            Digitize your clinic. <br />
             Better care for your <span className="text-gradient">community</span>.
           </h1>
 
           <p className="hero-description" style={{ marginBottom: '2rem', maxWidth: '600px' }}>
-            Designed for healthcare centers from Awetu Mendera Kebele and beyond. HealthCare Pro replaces lost paper files with reliable digital records, connecting your doctors, labs, and pharmacies to cut down patient waiting times and bring practical, life-saving efficiency to your daily work.
+            Designed for healthcare centers in Awetu Mendera Kebele.
+
+            Replace paper records, reduce waiting time, and connect doctors, labs, and pharmacies in one simple system.
           </p>
 
           <div className="hero-actions" style={{ justifyContent: 'flex-start', marginBottom: '3rem' }}>
             <button className="btn btn-primary" onClick={onGetStarted}>
-              Get Started <ArrowRight size={20} />
+              Launch Dashboard <ArrowRight size={20} />
             </button>
             <button className="btn btn-secondary">
-              <MessageSquare size={20} /> Request Demo
+              <MessageSquare size={20} /> View Demo System
             </button>
           </div>
 
@@ -60,72 +62,36 @@ export default function Hero({ onGetStarted }) {
             <div className="hero-mockup-wrapper relative">
               <div className="hero-mockup-main relative">
                 <div className="mockup-inner">
-                  {/* Glowing core visualization */}
-                  <div className="mockup-core-visual">
-                    <div className="core-circle c1"></div>
-                    <div className="core-circle c2"></div>
-                    <div className="core-circle c3"></div>
-                    <div className="core-icon">
-                      <Play size={40} fill="var(--color-primary)" color="var(--color-primary)" style={{ filter: 'drop-shadow(0 0 15px rgba(0,240,255,0.8))' }} />
+                  {/* Realistic Clinic Queue Dashboard Visualization */}
+                  <div className="mockup-core-visual" style={{ background: 'var(--color-bg-surface)', width: '100%', height: '100%', borderRadius: 'inherit', padding: 'var(--spacing-6)', display: 'flex', flexDirection: 'column', gap: '12px', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--glass-border)', paddingBottom: '16px', marginBottom: '8px' }}>
+                      <div style={{ fontWeight: '600', color: 'var(--color-white)', fontSize: '1.25rem' }}>Today's Queue</div>
+                      <div className="badge badge-primary">12 Waiting</div>
                     </div>
+                    {/* Queue Mock Items */}
+                    {[
+                      { name: 'Aster Tadesse', detail: 'OPD - Dr. Sarah', status: 'Consultation' },
+                      { name: 'Kebede Alemu', detail: 'Awaiting Results', status: 'Lab Request' },
+                      { name: 'Fatima Nur', detail: 'Prescription Ready', status: 'Pharmacy' },
+                      { name: 'Dawit Bekele', detail: 'Room 2', status: 'In Progress' }
+                    ].map((pt, i) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--color-highlight)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                        <div>
+                          <div style={{ fontSize: '15px', fontWeight: '500', color: 'var(--color-white)', marginBottom: '4px' }}>{pt.name}</div>
+                          <div style={{ fontSize: '13px', color: 'var(--color-gray-400)' }}>{pt.detail}</div>
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--color-primary)', background: 'var(--color-highlight)', padding: '4px 10px', borderRadius: '20px' }}>{pt.status}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-
-                {/* Floating Mock Records */}
-                {/* 1. Patient Card */}
-                <div className="absolute -top-10 -left-12 lg:-left-24 bg-gray-900/80 backdrop-blur-xl border border-[var(--color-border)] p-3.5 rounded-2xl shadow-lg flex items-center gap-3 w-64 transform hover:scale-105 transition-all duration-300 z-10 hover:border-blue-500/50" style={{ animation: 'bounce 4s infinite' }}>
-                  <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl border border-blue-500/20">
-                    <User size={20} className="text-blue-400" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-white tracking-wide">Aster Tadesse</div>
-                    <div className="flex items-center justify-between mt-0.5">
-                      <span className="text-xs text-blue-300/80">OPD - Room 2</span>
-                      <span className="text-[10px] flex items-center gap-1 text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded-full"><Clock size={10} /> 5 min</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. Lab Results Card */}
-                <div className="absolute top-24 -right-10 left-10 lg:-right-20 bg-gray-900/80 backdrop-blur-xl border border-[var(--color-border)] p-3.5 rounded-2xl shadow-lg flex items-center gap-3 w-64 transform hover:scale-105 transition-all duration-300 z-10 hover:border-emerald-500/50" style={{ animation: 'bounce 5s infinite 1s' }}>
-                  <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 rounded-xl border border-emerald-500/20 flex-shrink-0">
-                    <Activity size={20} className="text-emerald-400" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-semibold text-white">Lab Results</div>
-                      <CheckCircle2 size={14} className="text-emerald-400" />
-                    </div>
-                    <div className="text-xs text-emerald-300/80 mt-0.5">Malaria Rapid Test: <span className="font-medium text-emerald-400">Negative</span></div>
-                  </div>
-                </div>
-
-                {/* 3. Pharmacy Card */}
-                <div className="absolute -bottom-0 -left-2 lg:left-8 bg-gray-900/80 backdrop-blur-xl border border-[var(--color-border)] p-3.5 rounded-2xl shadow-lg flex items-center gap-3 w-60 transform hover:scale-105 transition-all duration-300 z-10 hover:border-purple-500/50" style={{ animation: 'bounce 4.5s infinite 0.5s' }}>
-                  <div className="p-2.5 bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-xl border border-purple-500/20 flex-shrink-0">
-                    <ClipboardList size={20} className="text-purple-400" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-white">Pharmacy</div>
-                    <div className="text-xs text-purple-300/80 mt-0.5">Amoxicillin • <span className="text-amber-400 animate-pulse">Dispensing</span></div>
-                  </div>
-                </div>
-
-                {/* 4. Mini Offline-Ready Badge */}
-                <div className="absolute -top-4 right-0 lg:-right-8 bg-gray-900/90 backdrop-blur-md border border-[var(--color-border)] px-3 py-1.5 rounded-full shadow-md flex items-center gap-2 transform hover:scale-105 transition-all z-20">
-                  <div className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </div>
-                  <span className="text-[10px] font-medium tracking-wider text-emerald-400 uppercase">Local Network Active</span>
-                </div>
-
               </div>
             </div>
           </div>
         </div>
-
       </div>
+
+
     </section>
   );
 }

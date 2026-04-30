@@ -5,7 +5,7 @@ import { useData } from '../../contexts/DataContext';
 export default function AddVisitModal() {
   const { patients, addVisit, closeAddVisitModal, selectedPatientId } = useData();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const initialPatient = patients.find(p => p.id === selectedPatientId) || patients[0];
 
   const [formData, setFormData] = useState({
@@ -31,7 +31,7 @@ export default function AddVisitModal() {
 
     // Find the current patient name if it was changed
     const currentPatient = patients.find(p => p.id === formData.patientId);
-    
+
     const visitToSubmit = {
       ...formData,
       patientName: currentPatient?.name || formData.patientName
@@ -64,17 +64,17 @@ export default function AddVisitModal() {
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
-            
+
             <div className="form-group">
               <label className="form-label">Select Patient</label>
               <div style={{ position: 'relative' }}>
                 <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-gray-400)' }} />
-                <select 
+                <select
                   name="patientId"
-                  className="form-control form-select" 
+                  className="form-control form-select"
                   style={{ paddingLeft: '40px' }}
                   value={formData.patientId}
                   onChange={handleChange}
@@ -91,7 +91,7 @@ export default function AddVisitModal() {
             <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div className="form-group">
                 <label className="form-label">Visit Type</label>
-                <select 
+                <select
                   name="type"
                   className="form-control form-select"
                   value={formData.type}
@@ -109,7 +109,7 @@ export default function AddVisitModal() {
                 <label className="form-label">Attending Doctor</label>
                 <div style={{ position: 'relative' }}>
                   <Stethoscope size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-gray-400)' }} />
-                  <select 
+                  <select
                     name="doctor"
                     className="form-control form-select"
                     style={{ paddingLeft: '40px' }}
@@ -130,12 +130,12 @@ export default function AddVisitModal() {
                 <label className="form-label">Date</label>
                 <div style={{ position: 'relative' }}>
                   <Calendar size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-gray-400)' }} />
-                  <input 
+                  <input
                     name="date"
-                    type="date" 
-                    className="form-control" 
+                    type="date"
+                    className="form-control"
                     style={{ paddingLeft: '40px' }}
-                    required 
+                    required
                     value={formData.date}
                     onChange={handleChange}
                   />
@@ -146,13 +146,13 @@ export default function AddVisitModal() {
                 <label className="form-label">Time</label>
                 <div style={{ position: 'relative' }}>
                   <Clock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-gray-400)' }} />
-                  <input 
+                  <input
                     name="time"
-                    type="text" 
-                    className="form-control" 
+                    type="text"
+                    className="form-control"
                     placeholder="10:00 AM"
                     style={{ paddingLeft: '40px' }}
-                    required 
+                    required
                     value={formData.time}
                     onChange={handleChange}
                   />
@@ -160,8 +160,8 @@ export default function AddVisitModal() {
               </div>
             </div>
 
-            <div style={{ margin: '24px 0', padding: '20px', background: 'var(--color-gray-50)', borderRadius: '12px', border: '1px solid var(--color-gray-100)' }}>
-              <h4 style={{ fontSize: '12px', color: 'var(--color-gray-500)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.05em' }}>Clinical Vitals</h4>
+            <div style={{ margin: '24px 0', padding: '20px', background: 'var(--color-highlight)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+              <h4 style={{ fontSize: '12px', color: 'var(--color-gray-400)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.05em' }}>Clinical Vitals</h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ fontSize: '11px' }}>Blood Pressure (mmHg)</label>
@@ -186,10 +186,10 @@ export default function AddVisitModal() {
               <label className="form-label">Reason for Visit</label>
               <div style={{ position: 'relative' }}>
                 <FileText size={18} style={{ position: 'absolute', left: '12px', top: '16px', color: 'var(--color-gray-400)' }} />
-                <textarea 
+                <textarea
                   name="reason"
-                  className="form-control" 
-                  placeholder="Describe the complaint or reason for visit..." 
+                  className="form-control"
+                  placeholder="Describe the complaint or reason for visit..."
                   style={{ paddingLeft: '40px', minHeight: '80px', paddingTop: '12px' }}
                   required
                   value={formData.reason}
@@ -198,18 +198,18 @@ export default function AddVisitModal() {
               </div>
             </div>
 
-            <div className="modal-footer" style={{ borderTop: '1px solid var(--color-gray-100)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
-              <button 
-                type="button" 
-                className="btn btn-outline flex-1" 
+            <div className="modal-footer" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '24px', marginTop: '24px', display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                className="btn btn-outline flex-1"
                 onClick={closeAddVisitModal}
                 disabled={isLoading}
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
-                className="btn btn-primary flex-1" 
+              <button
+                type="submit"
+                className="btn btn-primary flex-1"
                 disabled={isLoading}
               >
                 {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Confirm Visit'}
