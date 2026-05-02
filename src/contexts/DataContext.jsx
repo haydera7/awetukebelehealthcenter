@@ -47,6 +47,28 @@ const INITIAL_BILLS = [
   { id: 'INV-1002', patientId: '2', patientName: 'Tammirat Oli', date: '2026-04-24', items: [{ desc: 'Consultation', qty: 1, cost: 200 }, { desc: 'Blood Sugar Test', qty: 1, cost: 100 }], total: 300, status: 'Unpaid' }
 ];
 
+const INITIAL_PRESCRIPTIONS = [
+  {
+    id: "rx_123",
+    visitId: "VS-1042",
+    patientId: "1",
+    doctorId: "EMP-101",
+    status: "PRESCRIBED",
+    date: new Date().toISOString(),
+    items: [
+      {
+        itemId: "item_1",
+        medicineId: "MED-1",
+        name: "Amoxicillin 500mg",
+        dosage: "1 tab 3x daily",
+        requestedQty: 15,
+        dispensedQty: 0,
+        status: "PENDING"
+      }
+    ]
+  }
+];
+
 export const DataProvider = ({ children }) => {
   const [patients, setPatients] = useState(() => {
     const saved = localStorage.getItem('healthcare-patients');
@@ -83,6 +105,11 @@ export const DataProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : INITIAL_BILLS;
   });
 
+  const [prescriptions, setPrescriptions] = useState(() => {
+    const saved = localStorage.getItem('healthcare-prescriptions');
+    return saved ? JSON.parse(saved) : INITIAL_PRESCRIPTIONS;
+  });
+
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false);
   const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
@@ -98,7 +125,8 @@ export const DataProvider = ({ children }) => {
     localStorage.setItem('healthcare-staffs', JSON.stringify(staffs));
     localStorage.setItem('healthcare-inventory', JSON.stringify(inventory));
     localStorage.setItem('healthcare-bills', JSON.stringify(bills));
-  }, [patients, visits, medicalRecords, vitals, staffs, inventory, bills]);
+    localStorage.setItem('healthcare-prescriptions', JSON.stringify(prescriptions));
+  }, [patients, visits, medicalRecords, vitals, staffs, inventory, bills, prescriptions]);
 
   const addPatient = (newPatient) => {
     const patientWithId = {
@@ -153,22 +181,6 @@ export const DataProvider = ({ children }) => {
          updateVisitStatus(recordData.visitId, 'Results Ready');
        }
     }
-
-    // Auto-generate a Pharmacy order/bill if the doctor issues a Prescription
-    if (recordData.type === 'Prescription') {
-      const patient = patients.find(p => p.id === recordData.patientId);
-      const newBill = {
-        id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
-        patientId: recordData.patientId,
-        visitId: recordData.visitId,
-        patientName: patient ? patient.name : 'Unknown Patient',
-        date: new Date().toISOString().split('T')[0],
-        items: [{ desc: recordData.title || 'Pharmacy Prescription', qty: 1, cost: 150 }],
-        total: 150,
-        status: 'Unpaid'
-      };
-      setBills(prev => [newBill, ...prev]);
-    }
   };
 
   const addVitals = (vitalsData) => {
@@ -216,15 +228,160 @@ export const DataProvider = ({ children }) => {
     }));
   };
 
-  const markBillPaid = (id) => {
+  const addInventoryItem = (itemData) => {
+    const newItem = {
+      ...itemData,
+      id: `MED-${Math.floor(100 + Math.random() * 900)}`,
+      status: itemData.stock <= 100 ? 'Low Stock' : 'In Stock'
+    };
+    setInventory(prev => [newItem, ...prev]);
+  };
+
+  const addPaymentToBill = (id, amount, method = 'Cash', recordedBy = 'System') => {
     setBills(prev => prev.map(bill => {
       if (bill.id === id) {
-        if (bill.visitId) {
+        const currentPaid = bill.paidAmount || 0;
+        const newPaidAmount = currentPaid + amount;
+        
+        let newStatus = 'Unpaid';
+        if (newPaidAmount >= bill.total) {
+          newStatus = 'Paid';
+        } else if (newPaidAmount > 0) {
+          newStatus = 'Partial';
+        }
+
+        if (newStatus === 'Paid' && bill.visitId) {
           updateVisitStatus(bill.visitId, 'Completed');
         }
-        return { ...bill, status: 'Paid' }
+
+        const newPayment = {
+          txId: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+          amount,
+          date: new Date().toISOString(),
+          method,
+          recordedBy
+        };
+
+        const existingPayments = bill.payments || [];
+
+        return { 
+          ...bill, 
+          paidAmount: newPaidAmount, 
+          status: newStatus,
+          payments: [...existingPayments, newPayment]
+        };
       }
       return bill;
+    }));
+  };
+
+  const createManualInvoice = ({ patientName, items }) => {
+    let totalCost = 0;
+    const billedItems = [];
+
+    items.forEach(item => {
+       const med = inventory.find(m => m.id === item.medicineId);
+       if (med && item.qty > 0) {
+          const cost = item.qty * med.unitPrice;
+          totalCost += cost;
+          billedItems.push({ desc: med.name, qty: item.qty, cost: cost });
+          // Note: The inventory state will be updated sequentially, but updateInventoryStock relies on latest state via prev, so it's safe.
+          updateInventoryStock(item.medicineId, -item.qty);
+       }
+    });
+
+    if (totalCost > 0) {
+      const newBill = {
+        id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+        patientId: null,
+        visitId: null,
+        patientName: patientName || 'Walk-in Patient',
+        date: new Date().toISOString().split('T')[0],
+        items: billedItems,
+        total: totalCost,
+        paidAmount: 0,
+        status: 'Unpaid', 
+        payments: [],
+        source: 'OTC'
+      };
+      setBills(prev => [newBill, ...prev]);
+    }
+  };
+
+  const addPrescription = (prescriptionData) => {
+    const newPrescription = {
+      ...prescriptionData,
+      id: `rx_${Math.floor(1000 + Math.random() * 9000)}`,
+      status: 'PRESCRIBED',
+      date: new Date().toISOString()
+    };
+    setPrescriptions(prev => [newPrescription, ...prev]);
+    if (prescriptionData.visitId) {
+      updateVisitStatus(prescriptionData.visitId, 'Pharmacy Queue');
+    }
+  };
+
+  const dispensePrescription = (prescriptionId, dispensedItems) => {
+    setPrescriptions(prev => prev.map(rx => {
+      if (rx.id !== prescriptionId) return rx;
+
+      let allDispensed = true;
+      let anyDispensed = false;
+      let totalCost = 0;
+      const billedItems = [];
+
+      const updatedItems = rx.items.map(item => {
+        const dispensedInfo = dispensedItems.find(di => di.itemId === item.itemId);
+        if (dispensedInfo) {
+          if (dispensedInfo.dispensedQty > 0) {
+            updateInventoryStock(item.medicineId, -dispensedInfo.dispensedQty);
+            anyDispensed = true;
+            
+            // Calculate cost for bill
+            const med = inventory.find(m => m.id === item.medicineId);
+            if (med) {
+              const cost = dispensedInfo.dispensedQty * med.unitPrice;
+              totalCost += cost;
+              billedItems.push({ desc: med.name, qty: dispensedInfo.dispensedQty, cost: cost });
+            }
+          }
+          
+          if (dispensedInfo.dispensedQty < item.requestedQty && dispensedInfo.status !== 'OUT_OF_STOCK') {
+             allDispensed = false;
+          }
+          if (dispensedInfo.status === 'OUT_OF_STOCK' || dispensedInfo.status === 'PENDING') {
+             allDispensed = false;
+          }
+
+          return { ...item, dispensedQty: dispensedInfo.dispensedQty, status: dispensedInfo.status };
+        }
+        allDispensed = false;
+        return item;
+      });
+
+      const newStatus = allDispensed ? 'DISPENSED' : (anyDispensed ? 'PARTIALLY_DISPENSED' : 'PRESCRIBED');
+      
+      // Auto-generate invoice if something was dispensed
+      if (anyDispensed && totalCost > 0) {
+        const patient = patients.find(p => p.id === rx.patientId);
+        const newBill = {
+          id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+          patientId: rx.patientId,
+          visitId: rx.visitId,
+          patientName: patient ? patient.name : 'Unknown Patient',
+          date: new Date().toISOString().split('T')[0],
+          items: billedItems,
+          total: totalCost,
+          paidAmount: 0,
+          status: 'Unpaid',
+          payments: [],
+          referenceId: rx.id,
+          source: 'PHARMACY'
+        };
+        setBills(prevBills => [newBill, ...prevBills]);
+      }
+
+      return { ...rx, items: updatedItems, status: newStatus };
     }));
   };
 
@@ -263,6 +420,7 @@ export const DataProvider = ({ children }) => {
       staffs,
       inventory,
       bills,
+      prescriptions,
       addPatient,
       addVisit,
       addMedicalRecord,
@@ -273,7 +431,11 @@ export const DataProvider = ({ children }) => {
       deletePatient,
       deleteStaff,
       updateInventoryStock,
-      markBillPaid,
+      addInventoryItem,
+      addPaymentToBill,
+      createManualInvoice,
+      addPrescription,
+      dispensePrescription,
       isAddPatientModalOpen,
       openAddPatientModal,
       closeAddPatientModal,

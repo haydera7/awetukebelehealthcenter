@@ -1,4 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import './styles/design-tokens.css';
+
 @import "tailwindcss";
+
+
+
 
 @theme {
   --color-white: var(--color-white);
@@ -7,10 +13,6 @@
   --color-gray-900: var(--color-gray-900);
 }
 
-@import './styles/design-tokens.css';
-
-/* Import Inter Font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 *,
 *::before,

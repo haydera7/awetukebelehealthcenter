@@ -18,12 +18,6 @@ export default function AddVisitModal() {
     reason: ''
   });
 
-  const [vitalsData, setVitalsData] = useState({
-    bp: '',
-    heartRate: '',
-    temp: '',
-    weight: ''
-  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,7 +33,7 @@ export default function AddVisitModal() {
 
     // Simulate database saving delay
     setTimeout(() => {
-      addVisit(visitToSubmit, vitalsData);
+      addVisit(visitToSubmit);
       setIsLoading(false);
       closeAddVisitModal();
     }, 800);
@@ -50,10 +44,6 @@ export default function AddVisitModal() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleVitalsChange = (e) => {
-    const { name, value } = e.target;
-    setVitalsData(prev => ({ ...prev, [name]: value }));
-  };
 
   return (
     <div className="modal-overlay" onClick={closeAddVisitModal}>
@@ -160,27 +150,6 @@ export default function AddVisitModal() {
               </div>
             </div>
 
-            <div style={{ margin: '24px 0', padding: '20px', background: 'var(--color-highlight)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-              <h4 style={{ fontSize: '12px', color: 'var(--color-gray-400)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.05em' }}>Clinical Vitals</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label" style={{ fontSize: '11px' }}>Blood Pressure (mmHg)</label>
-                  <input name="bp" placeholder="120/80" className="form-control" style={{ fontSize: '13px' }} value={vitalsData.bp} onChange={handleVitalsChange} />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label" style={{ fontSize: '11px' }}>Heart Rate (BPM)</label>
-                  <input name="heartRate" placeholder="72" className="form-control" style={{ fontSize: '13px' }} value={vitalsData.heartRate} onChange={handleVitalsChange} />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label" style={{ fontSize: '11px' }}>Temperature (°C)</label>
-                  <input name="temp" placeholder="36.5" className="form-control" style={{ fontSize: '13px' }} value={vitalsData.temp} onChange={handleVitalsChange} />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label" style={{ fontSize: '11px' }}>Weight (kg)</label>
-                  <input name="weight" placeholder="70" className="form-control" style={{ fontSize: '13px' }} value={vitalsData.weight} onChange={handleVitalsChange} />
-                </div>
-              </div>
-            </div>
 
             <div className="form-group">
               <label className="form-label">Reason for Visit</label>
