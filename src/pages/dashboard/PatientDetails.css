@@ -84,6 +84,21 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 }
 
+.badge-success {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+
+.badge-danger {
+  background: rgba(255, 0, 96, 0.1);
+  color: #ff0060;
+}
+
+.badge-purple {
+  background: rgba(147, 51, 234, 0.1);
+  color: #a855f7;
+}
+
 .profile-contacts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

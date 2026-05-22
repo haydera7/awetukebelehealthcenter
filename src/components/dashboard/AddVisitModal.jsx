@@ -1,42 +1,54 @@
 import { useState } from 'react';
 import { X, Calendar, Clock, User, Stethoscope, FileText, Loader2 } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
+import { useSocket } from '../../contexts/SocketContext';
 
 export default function AddVisitModal() {
-  const { patients, addVisit, closeAddVisitModal, selectedPatientId } = useData();
+  const { patients, staffs, addVisit, updateVisit, closeAddVisitModal, selectedPatientId, selectedVisit } = useData();
+  const { onlineUsers, showToast } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
 
-  const initialPatient = patients.find(p => p.id === selectedPatientId) || patients[0];
+  const initialPatient = patients.find(p => p.id === (selectedVisit?.patientId || selectedPatientId)) || patients[0];
+  const clinicians = staffs.filter(s => ['Doctor', 'Nurse'].includes(s.role));
 
   const [formData, setFormData] = useState({
-    patientId: initialPatient?.id || '',
-    patientName: initialPatient?.name || '',
-    doctor: 'Dr. Sarah Jenkins',
-    type: 'Checkup',
-    date: new Date().toISOString().split('T')[0],
-    time: '10:00 AM',
-    reason: ''
+    patientId: selectedVisit?.patientId || initialPatient?.id || '',
+    patientName: selectedVisit?.patientName || initialPatient?.name || '',
+    doctor: selectedVisit?.doctor || clinicians[0]?.name || 'Dr. Sarah Jenkins',
+    type: selectedVisit?.type || 'Checkup',
+    date: selectedVisit?.date || new Date().toISOString().split('T')[0],
+    time: selectedVisit?.time || '10:00 AM',
+    reason: selectedVisit?.reason || ''
   });
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Find the current patient name if it was changed
-    const currentPatient = patients.find(p => p.id === formData.patientId);
+    try {
+      // Find the current patient name if it was changed
+      const currentPatient = patients.find(p => p.id === formData.patientId);
 
-    const visitToSubmit = {
-      ...formData,
-      patientName: currentPatient?.name || formData.patientName
-    };
+      const visitToSubmit = {
+        ...formData,
+        patientName: currentPatient?.name || formData.patientName
+      };
 
-    // Simulate database saving delay
-    setTimeout(() => {
-      addVisit(visitToSubmit);
+      if (selectedVisit) {
+        await updateVisit(selectedVisit.id, visitToSubmit);
+        showToast(`Visit for ${currentPatient?.name || formData.patientName} has been successfully updated!`, "success");
+      } else {
+        await addVisit(visitToSubmit);
+        showToast(`Visit for ${currentPatient?.name || formData.patientName} has been successfully scheduled!`, "success");
+      }
+
       setIsLoading(false);
       closeAddVisitModal();
-    }, 800);
+    } catch (err) {
+      setIsLoading(false);
+      showToast(err.message || "Failed to schedule visit. Please try again.", "danger");
+    }
   };
 
   const handleChange = (e) => {
@@ -49,7 +61,7 @@ export default function AddVisitModal() {
     <div className="modal-overlay" onClick={closeAddVisitModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '550px' }}>
         <div className="modal-header">
-          <h3 className="heading-4 text-gradient">Schedule New Visit</h3>
+          <h3 className="heading-4 text-gradient">{selectedVisit ? 'Update Clinical Visit' : 'Schedule New Visit'}</h3>
           <button className="modal-close" onClick={closeAddVisitModal}>
             <X size={24} />
           </button>
@@ -92,11 +104,15 @@ export default function AddVisitModal() {
                   <option>Consultation</option>
                   <option>Emergency</option>
                   <option>Lab Test</option>
+                  <option>Imaging</option>
+                  <option>Vaccination</option>
+                  <option>Maternal Care</option>
+                  <option>Referral</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Attending Doctor</label>
+                <label className="form-label">Attending Clinician / Room</label>
                 <div style={{ position: 'relative' }}>
                   <Stethoscope size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-gray-400)' }} />
                   <select
@@ -106,10 +122,21 @@ export default function AddVisitModal() {
                     value={formData.doctor}
                     onChange={handleChange}
                   >
-                    <option>Dr. Sarah Jenkins</option>
-                    <option>Dr. Mark Lee</option>
-                    <option>Dr. Emily Chen</option>
-                    <option>Dr. James Wilson</option>
+                    {clinicians.length > 0 ? (
+                      clinicians.map(c => {
+                        const isOnline = (onlineUsers || []).some(u =>
+                          (u.name || '').toLowerCase().includes((c.name || '').toLowerCase()) ||
+                          (c.name || '').toLowerCase().includes((u.name || '').toLowerCase())
+                        );
+                        return (
+                          <option key={c.id} value={c.name}>
+                            {c.name} ({c.role === 'Nurse' ? `Nurse - ${c.department}` : `Doctor - ${c.department || 'General'}`}) {isOnline ? '(🟢 Online)' : '(Offline)'}
+                          </option>
+                        );
+                      })
+                    ) : (
+                      <option>Dr. Sarah Jenkins</option>
+                    )}
                   </select>
                 </div>
               </div>
@@ -181,7 +208,7 @@ export default function AddVisitModal() {
                 className="btn btn-primary flex-1"
                 disabled={isLoading}
               >
-                {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Confirm Visit'}
+                {isLoading ? <Loader2 className="animate-spin" size={20} /> : (selectedVisit ? 'Update Visit' : 'Confirm Visit')}
               </button>
             </div>
           </form>

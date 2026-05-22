@@ -10,11 +10,14 @@ import Features from '../components/landing/Features';
 import Comparison from '../components/landing/Comparison';
 import SystemPreview from '../components/landing/SystemPreview';
 import LoginModal from '../components/auth/LoginModal';
+import api from '../services/api';
 import './LandingPage.css';
 
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isPatientMode, setIsPatientMode] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,14 +27,83 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Fetch active announcements
+    api.get('/announcements')
+      .then(res => {
+        if (res && res.data) {
+          setAnnouncements(res.data.filter(a => a.active));
+        }
+      })
+      .catch(err => console.error("Failed to load announcements on landing page:", err));
+  }, []);
+
+  const openStaffLogin = () => {
+    setIsPatientMode(false);
+    setIsLoginModalOpen(true);
+  };
+
+  const openPatientPortal = () => {
+    setIsPatientMode(true);
+    setIsLoginModalOpen(true);
+  };
+
   return (
     <div className="landing-page">
       <Navbar
         isScrolled={isScrolled}
-        onOpenLogin={() => setIsLoginModalOpen(true)}
+        onOpenLogin={openStaffLogin}
       />
       <main>
-        <Hero onGetStarted={() => setIsLoginModalOpen(true)} />
+        <Hero 
+          onGetStarted={openStaffLogin} 
+          onPatientPortal={openPatientPortal}
+        />
+
+        {announcements.length > 0 && (
+          <section className="landing-announcements">
+            <div className="container">
+              <div className="announcements-header">
+                <span className="live-indicator">
+                  <span className="pulse-dot"></span>
+                  LIVE ANNOUNCEMENTS
+                </span>
+                <h2 className="section-title">Clinical Notices & Updates</h2>
+                <p className="section-subtitle">Important real-time news, schedule adjustments, and system status alerts.</p>
+              </div>
+              <div className="landing-announcements-grid">
+                {announcements.slice(0, 3).map((ann) => (
+                  <div key={ann._id || ann.id} className={`landing-ann-card ${ann.category.toLowerCase()}`}>
+                    {ann.imageUrl && (
+                      <div className="landing-ann-img-wrapper">
+                        <img
+                          src={ann.imageUrl}
+                          alt={ann.title}
+                          className="landing-ann-img"
+                          onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
+                        />
+                        <span className={`landing-ann-img-badge ${ann.category.toLowerCase()}`}>
+                          {ann.category}
+                        </span>
+                      </div>
+                    )}
+                    <div className="ann-card-header">
+                      <span className={`ann-category-tag ${ann.category.toLowerCase()}`}>
+                        {ann.category}
+                      </span>
+                      <span className="ann-card-date">
+                        {new Date(ann.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <h3 className="ann-card-title">{ann.title}</h3>
+                    <p className="ann-card-content">{ann.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <About />
         <Trust />
         <Services />
@@ -39,7 +111,7 @@ export default function LandingPage() {
         <Comparison />
         <SystemPreview />
         <Testimonials />
-        <CTA onGetStarted={() => setIsLoginModalOpen(true)} />
+        <CTA onGetStarted={openStaffLogin} />
       </main>
 
       {/* Premium Footer */}
@@ -89,7 +161,10 @@ export default function LandingPage() {
       </footer>
 
       {isLoginModalOpen && (
-        <LoginModal onClose={() => setIsLoginModalOpen(false)} />
+        <LoginModal 
+          onClose={() => setIsLoginModalOpen(false)} 
+          initialIsPatient={isPatientMode}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Filter, MoreVertical, Edit2, Trash2, Eye } from 'lucide-react';
+import { Search, Plus, Filter, Edit2, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -8,96 +8,127 @@ import './PatientsList.css';
 export default function PatientsList() {
   const navigate = useNavigate();
   const { patients, openAddPatientModal, deletePatient } = useData();
-  const [searchQuery, setSearchQuery] = useState('');
   const { user } = useAuth();
+
+  // State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Filtering
   const filteredPatients = patients.filter(pt =>
     pt.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     pt.pid.toLowerCase().includes(searchQuery.toLowerCase()) ||
     pt.phone.includes(searchQuery)
   );
 
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedPatients = filteredPatients.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const canAddPatient = ['Receptionist'].includes(user?.role);
+
   return (
-    <div className="patients-page slide-in">
-      <div className="overview-header">
-        <div>
+    <div className="patients-page">
+      <div className="page-header">
+        <div className="header-content">
           <h1 className="heading-3">Patients Directory</h1>
-          <p style={{ color: 'var(--color-gray-500)' }}>Manage and view all registered patients.</p>
+          <p className="header-subtitle">Manage and monitor your patient registry and clinical histories.</p>
         </div>
-        {['Receptionist'].includes(user?.role) && <button className="btn btn-primary" onClick={openAddPatientModal}>
-          <Plus size={18} /> Add New Patient
-        </button>}
+
       </div>
 
-      <div className="panel flex-1">
-        <div className="panel-header filters-header">
-          <div className="search-box">
-            <Search size={18} color="var(--color-gray-400)" />
-            <input className='search-input'
+      <div className="patients-panel">
+        <div className="panel-filters">
+          <div className="search-wrapper">
+            <Search size={18} className="search-icon" />
+            <input
               type="text"
-              placeholder="Search by name, ID or phone..."
+              placeholder="Search by name, patient ID, or phone..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1); // Reset to page 1 on search
+              }}
             />
           </div>
-          <button className="btn btn-outline" style={{ background: 'var(--color-highlight)' }}>
-            <Filter size={18} /> Filter
+          <button className="btn-icon-label">
+            <Filter size={18} />
+            <span>Filter</span>
           </button>
         </div>
 
-        <div className="table-responsive">
-          <table className="dashboard-table">
+        <div className="table-container">
+          <table className="patients-table">
             <thead>
               <tr>
-                <th>Patient ID</th>
+                <th>ID</th>
                 <th>Patient Name</th>
                 <th>Age / Gender</th>
-                <th>Contact Number</th>
+                <th>Contact</th>
                 <th>Last Visit</th>
                 <th>Status</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredPatients.map(pt => (
-                <tr key={pt.id} className="hover-lift" style={{ transform: 'none', boxShadow: 'none' }}>
-                  <td style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{pt.pid}</td>
+              {paginatedPatients.map((pt) => (
+                <tr key={pt.id} onClick={() => navigate(`/dashboard/patient/${pt.id}`)}>
+                  <td className="patient-pid">{pt.pid}</td>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="avatar sm">{pt.name.split(' ').map(n => n[0]).join('')}</div>
-                      <span style={{ fontWeight: 500 }}>{pt.name}</span>
+                    <div className="patient-identity">
+                      <div className="patient-avatar">
+                        {pt.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <span className="patient-name">{pt.name}</span>
                     </div>
                   </td>
-                  <td>{pt.age} yrs, {pt.gender}</td>
-                  <td>{pt.phone}</td>
-                  <td>{pt.lastVisit}</td>
+                  <td className="patient-meta">{pt.age} yrs, {pt.gender}</td>
+                  <td className="patient-meta">{pt.phone}</td>
                   <td>
-                    <span className={`badge ${pt.status === 'Active' ? 'badge-success' : 'badge-danger'}`}>
+                    <span className="visit-date">
+                      {pt.lastVisit ? new Date(pt.lastVisit).toLocaleDateString('en-GB') : 'N/A'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`status-badge ${pt.status === 'Active' ? 'active' : pt.status === 'Referred' ? 'referred' : 'inactive'}`}>
                       {pt.status}
                     </span>
                   </td>
                   <td style={{ textAlign: 'right' }}>
-                    <div className="action-buttons">
-                      <button className="icon-btn" title="View Details" onClick={() => navigate(`/dashboard/patient/${pt.id}`)}>
+                    <div className="row-actions" onClick={(e) => e.stopPropagation()}>
+                      <button className="action-btn view" title="View Profile" onClick={() => navigate(`/dashboard/patient/${pt.id}`)}>
                         <Eye size={16} />
                       </button>
-                      {['Receptionist', 'Admin'].includes(user?.role) && <button className="icon-btn" title="Edit">
-                        <Edit2 size={16} />
-                      </button>}
-                      {['Receptionist', 'Admin'].includes(user?.role) && <button className="icon-btn delete" title="Delete" onClick={() => {
-                        if (window.confirm('Are you sure you want to delete this patient?')) {
-                          deletePatient(pt.id);
-                        }
-                      }}>
-                        <Trash2 size={16} />
-                      </button>}
+                      {['Receptionist', 'Admin'].includes(user?.role) && (
+                        <>
+                          <button className="action-btn edit" title="Edit Profile" onClick={() => openAddPatientModal(pt)}>
+                            <Edit2 size={16} />
+                          </button>
+                          <button className="action-btn delete" title="Delete Record" onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this patient record?')) {
+                              deletePatient(pt.id);
+                            }
+                          }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
               ))}
-              {filteredPatients.length === 0 && (
+              {paginatedPatients.length === 0 && (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: 'var(--color-gray-500)' }}>
-                    No patients found matching your search.
+                  <td colSpan="7" className="empty-state">
+                    No patients found matching your criteria.
                   </td>
                 </tr>
               )}
@@ -105,13 +136,30 @@ export default function PatientsList() {
           </table>
         </div>
 
-        <div className="pagination-footer">
-          <span style={{ color: 'var(--color-gray-500)', fontSize: 'var(--font-size-sm)' }}>
-            Showing {filteredPatients.length} entries
-          </span>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="btn btn-secondary" style={{ padding: '4px 12px' }} disabled>Previous</button>
-            <button className="btn btn-secondary" style={{ padding: '4px 12px' }} disabled>Next</button>
+        <div className="pagination-wrapper">
+          <div className="pagination-info">
+            Showing <span>{startIndex + 1}</span> to <span>{Math.min(startIndex + itemsPerPage, filteredPatients.length)}</span> of <span>{filteredPatients.length}</span> patients
+          </div>
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft size={18} />
+              <span>Previous</span>
+            </button>
+            <div className="page-numbers">
+              Page {currentPage} of {totalPages || 1}
+            </div>
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <span>Next</span>
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
       </div>

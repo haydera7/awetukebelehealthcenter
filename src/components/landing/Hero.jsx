@@ -1,6 +1,6 @@
 import { ArrowRight, MessageSquare, Play, User, Activity, ClipboardList, Clock, CheckCircle2 } from 'lucide-react';
 
-export default function Hero({ onGetStarted }) {
+export default function Hero({ onGetStarted, onPatientPortal }) {
   return (
     <section id="home" className="hero-section">
       <div className="orb-center"></div>
@@ -31,8 +31,8 @@ export default function Hero({ onGetStarted }) {
             <button className="btn btn-primary" onClick={onGetStarted}>
               Launch Dashboard <ArrowRight size={20} />
             </button>
-            <button className="btn btn-secondary">
-              <MessageSquare size={20} /> View Demo System
+            <button className="btn btn-secondary" onClick={onPatientPortal}>
+              <User size={20} /> Patient Portal
             </button>
           </div>
 

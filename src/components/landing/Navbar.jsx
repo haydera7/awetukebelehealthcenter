@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Activity, HeartPulse, Menu, X } from 'lucide-react';
+import { Activity, HeartPulse, Menu, X, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export default function Navbar({ isScrolled, onOpenLogin }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
     <>
@@ -28,6 +30,15 @@ export default function Navbar({ isScrolled, onOpenLogin }) {
             <button className="btn btn-primary desktop-get-started" onClick={onOpenLogin}>
               Get Started
             </button>
+            
+            <button 
+              className="theme-toggle-btn" 
+              onClick={toggleTheme}
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
             <button className="mobile-menu-toggle" onClick={() => setIsMobileOpen(!isMobileOpen)}>
               {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -46,6 +57,14 @@ export default function Navbar({ isScrolled, onOpenLogin }) {
           <div className="mobile-actions-box">
             <button className="btn btn-secondary w-full" onClick={() => { setIsMobileOpen(false); onOpenLogin(); }}>Log in</button>
             <button className="btn btn-primary w-full" onClick={() => { setIsMobileOpen(false); onOpenLogin(); }}>Get Started</button>
+            <button 
+              className="btn btn-outline w-full" 
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '12px' }}
+              onClick={toggleTheme}
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
           </div>
         </div>
       </div>
